@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Sets environmental variables
+
+export HBNB_ENV="test"
+export HBNB_MYSQL_USER="root"
+export HBNB_MYSQL_PWD=""
+export HBNB_MYSQL_HOST="localhost"
+export HBNB_MYSQL_DB="db"
+export HBNB_TYPE_STORAGE="file"
