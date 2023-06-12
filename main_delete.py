@@ -1,6 +1,16 @@
 #!/usr/bin/python3
 """ Test delete feature
 """
+
+import sys
+import os
+
+# Add the parent directory of main_delete.py to the module search path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+
+# Now you can import the models module
 from models.engine.file_storage import FileStorage
 from models.state import State
 

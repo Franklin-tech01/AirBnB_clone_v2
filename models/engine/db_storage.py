@@ -78,7 +78,7 @@ class DBStorage():
         from models.city import City
         from models.amenity import Amenity
         from models.place import Place
-        from models.review import
+        from models.review import Review
 
         Base.metadata.create_all(self.__engine)
         session_factory = sessionmaker(bind=self.__engine,
