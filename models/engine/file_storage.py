@@ -1,6 +1,59 @@
+# import json
+# from models.base_model import BaseModel
+# from models.user import User
+
+
+# class FileStorage:
+#     """ FileStorage class """
+#     __file_path = "file.json"
+#     __objects = {}
+
+#     def all(self, cls=None):
+#         """ Returns the list of objects of one type of class """
+#         if cls is None:
+#             return self.__objects
+#         else:
+#             objects = {}
+#             for key, obj in self.__objects.items():
+#                 if isinstance(obj, cls):
+#                     objects[key] = obj
+#             return objects
+
+#     def new(self, obj):
+#         """ Sets in __objects the obj with key """
+#         key = "{}.{}".format(obj.__class__.__name__, obj.id)
+#         self.__objects[key] = obj
+
+#     def save(self):
+#         """ Serializes __objects to the JSON file """
+#         serialized_objects = {}
+#         for key, obj in self.__objects.items():
+#             serialized_objects[key] = obj.to_dict()
+#         with open(self.__file_path, 'w') as file:
+#             json.dump(serialized_objects, file)
+
+#     def reload(self):
+#         """ Deserializes the JSON file to __objects """
+#         try:
+#             with open(self.__file_path, 'r') as file:
+#                 data = json.load(file)
+#                 for key, value in data.items():
+#                     class_name = value['__class__']
+#                     obj = eval(class_name)(**value)
+#                     self.__objects[key] = obj
+#         except FileNotFoundError:
+#             pass
+
+#     def delete(self, obj=None):
+#         """ Deletes obj from __objects if it exists """
+#         if obj is not None:
+#             key = "{}.{}".format(obj.__class__.__name__, obj.id)
+#             if key in self.__objects:
+#                 del self.__objects[key]
 import json
 from models.base_model import BaseModel
 from models.user import User
+import datetime
 
 
 class FileStorage:
