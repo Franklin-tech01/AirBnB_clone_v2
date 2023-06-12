@@ -78,25 +78,25 @@ class FileStorage:
     __file_path = "file.json"
     __objects = {}
 
-    def all(self, cls=None):
-        """ Returns the list of objects of one type of class """
-        if cls is None:
-            return self.__objects
-        else:
-            objects = {}
-            for key, obj in self.__objects.items():
-                if type(obj).__name__ == cls.__name__:
-                    objects[key] = obj
-            return objects
     # def all(self, cls=None):
+    #     """ Returns the list of objects of one type of class """
     #     if cls is None:
     #         return self.__objects
     #     else:
-    #         filtered_objects = {}
-    #         for obj_id, obj in self.__objects.items():
-    #             if type(obj) == cls:
-    #                 filtered_objects[obj_id] = obj
-    #         return filtered_objects
+    #         objects = {}
+    #         for key, obj in self.__objects.items():
+    #             if type(obj).__name__ == cls.__name__:
+    #                 objects[key] = obj
+    #         return objects
+    def all(self, cls=None):
+        if cls is None:
+            return self.__objects
+        else:
+            filtered_objects = {}
+            for obj_id, obj in self.__objects.items():
+                if type(obj) == cls:
+                    filtered_objects[obj_id] = obj
+            return filtered_objects
 
     def new(self, obj):
         """ Sets in __objects the obj with key """
@@ -123,18 +123,18 @@ class FileStorage:
         except FileNotFoundError:
             pass
 
-    def delete(self, obj=None):
-        """ Deletes obj from __objects if it exists """
-        if obj is not None:
-            key = "{}.{}".format(obj.__class__.__name__, obj.id)
-            if key in self.__objects:
-                del self.__objects[key]
-
     # def delete(self, obj=None):
+    #     """ Deletes obj from __objects if it exists """
     #     if obj is not None:
-    #         obj_id = obj.__class__.__name__ + "." + obj.id
-    #         if obj_id in self.__objects:
-    #             del self.__objects[obj_id]
+    #         key = "{}.{}".format(obj.__class__.__name__, obj.id)
+    #         if key in self.__objects:
+    #             del self.__objects[key]
+
+    def delete(self, obj=None):
+        if obj is not None:
+            obj_id = obj.__class__.__name__ + "." + obj.id
+            if obj_id in self.__objects:
+                del self.__objects[obj_id]
 
 
     def close(self):
