@@ -20,16 +20,16 @@ class HBNBCommand(cmd.Cmd):
     prompt = '(hbnb) '
 
     classes = {
-               'BaseModel': BaseModel, 'User': User, 'Place': Place,
-               'State': State, 'City': City, 'Amenity': Amenity,
-               'Review': Review
-              }
+        'BaseModel': BaseModel, 'User': User, 'Place': Place,
+        'State': State, 'City': City, 'Amenity': Amenity,
+        'Review': Review
+    }
     dot_cmds = ['all', 'count', 'show', 'destroy', 'update']
     types = {
-             'number_rooms': int, 'number_bathrooms': int,
-             'max_guest': int, 'price_by_night': int,
-             'latitude': float, 'longitude': float
-            }
+        'number_rooms': int, 'number_bathrooms': int,
+        'max_guest': int, 'price_by_night': int,
+        'latitude': float, 'longitude': float
+    }
 
     def precmd(self, line):
         """Reformat command line for advanced command syntax.
@@ -151,26 +151,30 @@ class HBNBCommand(cmd.Cmd):
     #     print("{}".format(new_instance.id))
 
 
-def do_create(self, arg):
-    if not arg:
+def do_create(self, args):
+    """ Create an object of any class"""
+    if not args:
         print("** class name missing **")
         return
 
-    args = arg.split()
-    class_name = args[0]
-    if class_name not in valid_classes:
+    class_name, *params = args.split()
+    if class_name not in self.classes:
         print("** class doesn't exist **")
         return
 
+    new_instance = self.classes[class_name]()
+
     kwargs = {}
-    for param in args[1:]:
-        if '=' not in param:
+    for param in params:
+        key_value = param.split('=')
+        if len(key_value) != 2:
             continue
-        key, value = param.split('=', 1)
+
+        key, value = key_value
         value = value.replace('_', ' ')
+
         if value.startswith('"') and value.endswith('"'):
-            value = value[1:-1]
-            value = value.replace('\\"', '"')
+            value = value[1:-1].replace('\\"', '"')
         elif '.' in value:
             try:
                 value = float(value)
@@ -181,45 +185,53 @@ def do_create(self, arg):
                 value = int(value)
             except ValueError:
                 continue
+
         kwargs[key] = value
 
-    new_instance = eval(class_name)(**kwargs)
+    for key, value in kwargs.items():
+        setattr(new_instance, key, value)
+
     new_instance.save()
     print(new_instance.id)
 
+    # def help_create(self):
+    #     """ Help information for the create method """
+    #     print("Creates a class of any type")
+    #     print("[Usage]: create <className>\n")
     def help_create(self):
-        """ Help information for the create method """
-        print("Creates a class of any type")
-        print("[Usage]: create <className>\n")
+        print("Creates an instance of a class with given parameters")
+        print("Usage: create <ClassName> <param1=value1> <param2=value2> ...")
+        print("Parameters:")
+        print("    - String: Enclose the value in double quotes (e.g., name=\"John\")")
+        print("      Replace underscores with spaces in the string value.")
+        print("    - Float: Use the format <unit>.<decimal> (e.g., price=10.99)")
+        print("    - Integer: Use a number without decimal (e.g., age=25)")
 
     def do_show(self, args):
-        """ Method to show an individual object """
-        new = args.partition(" ")
-        c_name = new[0]
-        c_id = new[2]
-
-        # guard against trailing args
-        if c_id and ' ' in c_id:
-            c_id = c_id.partition(' ')[0]
-
-        if not c_name:
+        """Prints the string representation of an instance"""
+        if not args:
             print("** class name missing **")
             return
 
-        if c_name not in HBNBCommand.classes:
+        args_list = shlex.split(args)
+        class_name = args_list[0]
+        if class_name not in self.classes:
             print("** class doesn't exist **")
             return
 
-        if not c_id:
+        if len(args_list) < 2:
             print("** instance id missing **")
             return
 
+        obj_id = args_list[1]
+        key = class_name + "." + obj_id
         objects = storage.all()
-        key = c_name + "." + c_id
-        try:
+
+        if key in objects:
             print(objects[key])
-        except KeyError:
+        else:
             print("** no instance found **")
+
 
     def help_show(self):
         """ Help information for the show command """
@@ -269,7 +281,6 @@ def do_create(self, arg):
                 print("** class doesn't exist **")
                 return
 
-
             for k, v in storage.all().items():
                 if k.split('.')[0] == args:
                     print_list.append(str(v))
@@ -277,10 +288,10 @@ def do_create(self, arg):
             for k, v in storage.all().items():
                 for k, v in objects.items():
                     if k.split('.')[0] == args:
-                     print_list.append(str(v))
+                        print_list.append(str(v))
             else:
-             for k, v in objects.items():
-                print_list.append(str(v))
+                for k, v in objects.items():
+                    print_list.append(str(v))
 
         print(print_list)
 
