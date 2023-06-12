@@ -1,30 +1,29 @@
 #!/usr/bin/python3
-"""This module defines a Class User"""
+""" holds class User"""
+import models
 from models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, ForeignKey
-from sqlalchemy.orm import relationship, backref
+from os import getenv
+import sqlalchemy
+from sqlalchemy import Column, String
+from sqlalchemy.orm import relationship
 
 
 class User(BaseModel, Base):
-    """This class defines a user by various attributes
-     Attributes:
-        email: email address
-        password: password for you login
-        first_name: first name
-        last_name: last name
-    """
-    __tablename__ = "users"
-    email = Column(String(128), nullable=False)
-    password = Column(String(128), nullable=False)
-    first_name = Column(String(128), nullable=True)
-    last_name = Column(String(128), nullable=True)
-    places = relationship("Place",
-                          cascade="all,delete",
-                          backref=backref("user", cascade="all,delete"),
-                          passive_deletes=True,
-                          single_parent=True)
-    reviews = relationship("Review",
-                           cascade="all,delete",
-                           backref=backref("user", cascade="all,delete"),
-                           passive_deletes=True,
-                           single_parent=True)
+    """Representation of a user """
+    if models.storage_t == 'db':
+        __tablename__ = 'users'
+        email = Column(String(128), nullable=False)
+        password = Column(String(128), nullable=False)
+        first_name = Column(String(128), nullable=True)
+        last_name = Column(String(128), nullable=True)
+        places = relationship("Place", backref="user")
+        reviews = relationship("Review", backref="user")
+    else:
+        email = ""
+        password = ""
+        first_name = ""
+        last_name = ""
+
+    def __init__(self, *args, **kwargs):
+        """initializes user"""
+        super().__init__(*args, **kwargs)
