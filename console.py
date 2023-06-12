@@ -102,56 +102,90 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-    def do_create(self, args):
-        """ Create an object of any class"""
-        new = args.split(" ")
-        if not new:
-            print("** class name missing **")
-            return
-<<<<<<< HEAD
-        elif new[0] not in HBNBCommand.classes:
-            print("** class doesn't exist **")
-            return
-        new_instance = HBNBCommand.classes[new[0]]()
+    # def do_create(self, args):
+    #     """ Create an object of any class"""
+    #     new = args.split(" ")
+    #     if not new:
+    #         print("** class name missing **")
+    #         return
+    #     elif new[0] not in HBNBCommand.classes:
+    #         print("** class doesn't exist **")
+    #         return
+    #     new_instance = HBNBCommand.classes[new[0]]()
 
-        for i in range(1, len(new)):
-            first = new[i].split("=")
+    #     for i in range(1, len(new)):
+    #         first = new[i].split("=")
+    #         try:
+    #             if first[1][0] == "\"":
+    #                 first[1] = first[1].replace("\"", "")
+    #                 first[1] = first[1].replace("_", " ")
+
+    #             elif "." in first[1]:
+    #                 first[1] = float(first[1])
+
+    #             else:
+    #                 first[1] = int(first[1])
+    #             setattr(new_instance, first[0], first[1])
+    #         except (Exception):
+    #             continue
+
+    #     new_instance.save()
+    #     print(new_instance.id)
+    #     my_list = args.split(" ")
+    #     if my_list[0] not in HBNBCommand.classes:
+    #         print("** class doesn't exist **")
+    #         return
+    #     new_instance = HBNBCommand.classes[my_list[0]]()
+    #     for arg_pair in my_list[1:]:
+    #         arg_pair = arg_pair.split('=', 1)
+    #         value = arg_pair[1]
+    #         if arg_pair[1][0] == '"':
+    #             value = value[1:-1].replace('_', ' ')
+    #         else:
+    #             if "." in value:
+    #                 value = float(value)
+    #             else:
+    #                 value = int(value)
+    #         setattr(new_instance, arg_pair[0], value)
+    #     new_instance.save()
+    #     print("{}".format(new_instance.id))
+
+
+def do_create(self, arg):
+    if not arg:
+        print("** class name missing **")
+        return
+
+    args = arg.split()
+    class_name = args[0]
+    if class_name not in valid_classes:
+        print("** class doesn't exist **")
+        return
+
+    kwargs = {}
+    for param in args[1:]:
+        if '=' not in param:
+            continue
+        key, value = param.split('=', 1)
+        value = value.replace('_', ' ')
+        if value.startswith('"') and value.endswith('"'):
+            value = value[1:-1]
+            value = value.replace('\\"', '"')
+        elif '.' in value:
             try:
-                if first[1][0] == "\"":
-                    first[1] = first[1].replace("\"", "")
-                    first[1] = first[1].replace("_", " ")
-
-                elif "." in first[1]:
-                    first[1] = float(first[1])
-
-                else:
-                    first[1] = int(first[1])
-                setattr(new_instance, first[0], first[1])
-            except (Exception):
+                value = float(value)
+            except ValueError:
                 continue
+        else:
+            try:
+                value = int(value)
+            except ValueError:
+                continue
+        kwargs[key] = value
 
-        new_instance.save()
-        print(new_instance.id)
-=======
-        my_list = args.split(" ")
-        if my_list[0] not in HBNBCommand.classes:
-            print("** class doesn't exist **")
-            return
-        new_instance = HBNBCommand.classes[my_list[0]]()
-        for arg_pair in my_list[1:]:
-            arg_pair = arg_pair.split('=', 1)
-            value = arg_pair[1]
-            if arg_pair[1][0] == '"':
-                value = value[1:-1].replace('_', ' ')
-            else:
-                if "." in value:
-                    value = float(value)
-                else:
-                    value = int(value)
-            setattr(new_instance, arg_pair[0], value)
-        new_instance.save()
-        print("{}".format(new_instance.id))
->>>>>>> b464a7d914626ee00bf8b02af7c9bc565e71d45a
+    new_instance = eval(class_name)(**kwargs)
+    new_instance.save()
+    print(new_instance.id)
 
     def help_create(self):
         """ Help information for the create method """
@@ -234,19 +268,18 @@ class HBNBCommand(cmd.Cmd):
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-<<<<<<< HEAD
+
+
             for k, v in storage.all().items():
                 if k.split('.')[0] == args:
                     print_list.append(str(v))
         else:
             for k, v in storage.all().items():
-=======
-            for k, v in objects.items():
-                if k.split('.')[0] == args:
-                    print_list.append(str(v))
-        else:
-            for k, v in objects.items():
->>>>>>> b464a7d914626ee00bf8b02af7c9bc565e71d45a
+                for k, v in objects.items():
+                    if k.split('.')[0] == args:
+                     print_list.append(str(v))
+            else:
+             for k, v in objects.items():
                 print_list.append(str(v))
 
         print(print_list)
@@ -259,12 +292,7 @@ class HBNBCommand(cmd.Cmd):
     def do_count(self, args):
         """Count current number of class instances"""
         count = 0
-<<<<<<< HEAD
         for k, v in storage.all().items():
-=======
-        objects = storage.all()
-        for k, v in objects.items():
->>>>>>> b464a7d914626ee00bf8b02af7c9bc565e71d45a
             if args == k.split('.')[0]:
                 count += 1
         print(count)
